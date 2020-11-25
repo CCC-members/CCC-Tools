@@ -7,9 +7,10 @@ echo "-->> Starting process..."
 username="ariosky"
 password="AngelE12A"
 
-N=20
-
 declare -a nodes=("gpu01" "gpu01" "gpu01" "gpu01" "gpu01" "gpu02" "gpu02" "gpu02" "node01" "node01" "node02" "node02" "node03" "node04" "node05" "node06" "node07" "node08" "node09" "node10")
+N=${#nodes[@]}
+echo "Total of instances: "$N
+
 function_workspace="/home/ariosky/Actual_Process/BC-V_data_converter"
 script_path="/home/ariosky/Actual_Process/Multi_node_converter"
 function_name="Main"
