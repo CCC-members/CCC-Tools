@@ -20,10 +20,10 @@ echo "Id node: "$idnode
 echo "Total nodes: "$N
 echo "Password: "$password 
 if test -f "$script_path/run_process.sh"; then
-    cd $script_path
-     ./run_process.sh $function_workspace $function $idnode $N
+  cd $script_path
+   ./run_process.sh $function_workspace $function $idnode $N
 else
-    echo "The file: 'run_process.sh' cannot be found in the current folder"
+  echo "The file: 'run_process.sh' cannot be found in the current folder"
 fi
 exit
 >/dev/null
