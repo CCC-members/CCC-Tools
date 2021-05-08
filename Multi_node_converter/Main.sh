@@ -4,19 +4,20 @@ echo ""
 echo $tittle
 echo ""
 echo "-->> Starting process..."
-username="ariosky"
-password="AngelE12A"
-function_workspace="/home/ariosky/Actual_Process/BC-V_data_converter"
+username="username"
+password="userpass"
+function_workspace="qqqqqqqqq"
+script_path="`pwd`"
+function_name="Main"
 
 if test -d "$function_workspace"; then
-    declare -a nodes=("gpu01" "gpu01" "gpu01" "gpu01" "gpu01" "gpu02" "gpu02" "gpu02" "node01" "node01" "node02" "node02" "node03" "node04" "node05" "node06" "node07" "node08" "node09" "node10")
-    N=${#nodes[@]}
-    echo "Total of instances: "$N
+  declare -a nodes=("gpu01" "gpu01" "gpu01" "gpu01" "gpu01" "gpu02" "gpu02" "gpu02" "node01" "node01" "node02" "node02" "node03" "node04" "node05" "node06" "node07" "node08" "node09" "node10")
+  
+  N=${#nodes[@]}
+  echo "Total of instances: "$N  
 
-    script_path="`pwd`"
-    function_name="Main"
-    idnode=1
- if test -f "$script_path/move_to_node.sh"; then
+  idnode=1
+  if test -f "$script_path/move_to_node.sh"; then
     for node in "${nodes[@]}"; do
       (   
         echo "Moving to node: "$node" in instance :"$idnode
@@ -32,13 +33,13 @@ if test -d "$function_workspace"; then
           wait
       fi
     done
-else
+  else
     echo "The file: 'move_to_node.sh' cannot be found in the current folder"
-fi
-
-    # no more jobs to be started but wait for pending jobs
-    # (all need to be finished)
-    wait
+  fi
+  
+  # no more jobs to be started but wait for pending jobs
+  # (all need to be finished)
+  wait
 else
   echo "The address: function_workspace='$function_workspace' is not a directory"
 fi
