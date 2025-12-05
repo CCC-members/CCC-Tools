@@ -11,17 +11,21 @@ script_path="`pwd`"
 function_name="Main"
 
 if test -d "$function_workspace"; then
-  declare -a nodes=("gpu01" "gpu01" "gpu01" "gpu01" "gpu01" "gpu02" "gpu02" "gpu02" "node01" "node01" "node02" "node02" "node03" "node04" "node05" "node06" "node07" "node08" "node09" "node10")
+  declare -a nodes=("gpu01" "gpu02" "node01" "node02" "node03" "node04" "node05" "node06" "node07" "node08" "node09" "node10")
   
   N=${#nodes[@]}
-  echo "Total of instances: "$N  
-
+  echo "Total of instances: "$N
+  
+  script_path="`pwd`"
+  function_name="Main"
   idnode=1
   if test -f "$script_path/move_to_node.sh"; then
     for node in "${nodes[@]}"; do
       (   
         echo "Moving to node: "$node" in instance :"$idnode
-        gnome-terminal --tab --title="Process in node: "$node --command="bash -c '$script_path/move_to_node.sh $script_path $function_workspace $function_name $node $idnode $N $password'"
+        #gnome-terminal -- "bash -c '$script_path/move_to_node.sh $script_path $function_workspace $function_name $node $idnode $N $password'"
+        #gnome-terminal --geometry=25x2 --tab --title="$node" -- "bash -c '$script_path/move_to_node.sh $script_path $function_workspace $function_name $node $idnode $N $password'"
+      gnome-terminal --geometry=25x2 --tab --title="$node" --command="bash -c '$script_path/move_to_node.sh $script_path $function_workspace $function_name $node $idnode $N $password'"
         #xterm -e "/home/$username/Actual_Process/move_to_node.sh" $workspace_path $function_name $node $idnode $N $password
       ) &
       ((idnode=idnode+1))

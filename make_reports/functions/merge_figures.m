@@ -23,12 +23,9 @@ function fig_out = merge_figures(fig_name, fig_title, figures, varargin)
 for i=1:2:length(varargin)
     eval([varargin{i} '=  varargin{(i+1)};'])
 end
-
-if(~exist('width','var'))
-    width = 875;
-end
-if(~exist('height','var'))
-    height = 400;
+Position = {[0 0.5 0.5 0.5],[0.5 0.5 0.5 0.5],[0 0 0.5 0.5],[0.5 0 0.5 0.5]};
+if(~exist('position','var'))
+    position = 'absolute';
 end
 if(~exist('rows','var'))
     rows = 1;
@@ -55,41 +52,68 @@ for i=1:length(figures)
     end
     figures_path{i} = fig_path;
 end
-fig_out = figure('Name', fig_name, 'NumberTitle', 'off', 'Position', [200,500,width,height]);
+if(exist('width','var') && exist('height','var'))
+   fig_Position = [200,200,width,height];
+else
+    fig_Position = [200,200,900,700];   
+end
+fig_out = figure('Name', fig_name, 'NumberTitle', 'off', 'Position', fig_Position);
 axis off;
-axis tight;
 for i=1:rows
     for j=1:cols
         p = (i-1)*cols+j;
         if(p>length(figures_path))
             break;
         end
-        h(p)=subplot(rows,cols,p);
-        if(exist('axis_on','var'))
-            if(isequal(axis_on{p},'on'));axis on; else;axis off;end
-        else
-            axis on;
+        sub_p=subplot(rows,cols,p);   
+        set(sub_p,'XTick',[], 'YTick', []); % all in one  
+        if(~isequal(position,'relative'))
+            sub_p.Position = Position{p};
         end
-        axis tight;
         if(isempty(figures_path{p}));continue;end
-        handle=hgload(figures_path{p});
-        title_obj = get(gca,'title');
+        f_c = openfig(figures_path{p});        
         clear title;        
         H = findobj(gca, 'Type','Text');
         if(~isempty(H))
             delete(H);
         end        
-        title_str = title_obj.String;
-        copyobj(allchild(get(handle,'CurrentAxes')),h(p));
-        close(handle);
-        title(title_str);  
+        % Identify axes to be copied
+        axes_to_be_copied = findobj(f_c,'type','axes');
+        % Identify the children of this axes
+        chilred_to_be_copied = get(axes_to_be_copied,'children');
+        % Identify orientation of the axes
+        [az,el] = view;
+        % Copy the children of the axes
+        if(iscell(chilred_to_be_copied))
+            copyobj(chilred_to_be_copied{2},sub_p);
+        else
+            copyobj(chilred_to_be_copied,sub_p);
+        end
+        % Close the figure
+        close(f_c);
+        axis vis3d;
+        axis equal;
+        if(exist('axis_on','var'))
+            if(isequal(axis_on{p},'on'));axis on; else;axis off;end
+        else
+            axis on;
+        end
+        if(exist('colorbars','var'))
+            if(isequal(colorbars{p},'on'));colorbar ; else; colorbar off; end
+        else
+            colorbar off;
+        end
         if(exist('view_orient','var'))
             if(~isempty(view_orient{p}))
                 orient = view_orient{p};
                 view(orient(1),orient(2));
             end
+        end 
+        if(exist('subtitles','var'))
+            subtitle = subtitles{p};
+            title(subtitle);
         end
-        
+        pause(1);        
     end
 end
 if(exist('cmap','var'))
@@ -99,6 +123,7 @@ if(isfolder(tmp_path))
    rmdir(tmp_path,'s'); 
 end
 sgtitle(fig_title);
+
 %% Colspan
 % subplot(4,4,[1 6]) % top left
 % subplot(4,4,[3 8]) % top right
